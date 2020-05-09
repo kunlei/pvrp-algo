@@ -2,3 +2,4 @@ main
 *.txt
 build/
 !.gitignore
+!instance
