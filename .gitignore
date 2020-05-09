@@ -2,4 +2,6 @@ main
 *.txt
 build/
 !.gitignore
-!instance
+!instance/
+!instance/new/*.txt
+!instance/old/*.txt
