@@ -1,6 +1,7 @@
 #ifndef DATA_POND_HPP
 #define DATA_POND_HPP
 #include <vector>
+#include <string>
 #include <iostream>
 #include "Customer.hpp"
 
@@ -15,25 +16,30 @@ class DataPond {
   ~DataPond();
 
   // data processing
-  void readData(std::string instId);
+  void readData(std::string instMark, int instId);
   void calDistance();
   void calSrvPattern();
 
   // accessors
-  int getNumDays() const { return numDays; }
   int getNumVehicles() const { return numVehicles; }
+  int getNumCustomers() const { return numCustomers; }
+  int getNumDays() const { return numDays; }
   double getMaxDuration() const { return maxDuration; }
   int getMaxLoad() const { return maxLoad; }
 
  private:
   /**
-   * number of days in the planning horizon
-   */
-  int numDays;
-  /**
    * number of vehicles
    */
   int numVehicles;
+  /**
+   * number of customers
+   */
+  int numCustomers;
+  /**
+   * number of days in the planning horizon
+   */
+  int numDays;
   /**
    * constraints on the vehicle
    */
@@ -42,7 +48,7 @@ class DataPond {
   /**
    * all the customers
    */
-  std::vector<Customer> customers;
+  std::vector<Customer *> customers;
 };
 std::ostream &operator<<(std::ostream &, const DataPond &);
 

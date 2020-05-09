@@ -24,7 +24,8 @@ class Customer {
  public:
   Customer(int idx, double lat, double lon,
            double srvTime, int demand,
-           int numPatterns);
+           int numPatterns,
+           int numDays);
   ~Customer();
   Customer() = delete;
 

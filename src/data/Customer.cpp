@@ -22,12 +22,13 @@ ostream &operator<<(ostream &strm, const Customer &c) {
  */
 Customer::Customer(int idx, double lat, double lon,
                    double srvTime, int demand,
-                   int numPatterns) : idx(idx),
-                                      lat(lat),
-                                      lon(lon),
-                                      srvTime(srvTime),
-                                      demand(demand),
-                                      numPatterns(numPatterns) {
+                   int numPatterns,
+                   int numDays) : idx(idx),
+                                  lat(lat),
+                                  lon(lon),
+                                  srvTime(srvTime),
+                                  demand(demand),
+                                  numPatterns(numPatterns) {
 
 }
 

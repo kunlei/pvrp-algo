@@ -1,10 +1,22 @@
 #include <iostream>
+#include <string>
+#include "src/data/DataPond.hpp"
 
 using std::cout;
 using std::endl;
+using std::string;
+
+using namespace pvrp;
 
 int main() {
-  cout << "hello pvrp world!" << endl;
+  string instMark{"new"};
+  int instId{1};
+
+  // read data
+  DataPond dataPond;
+  dataPond.readData(instMark, instId);
+
+  cout << dataPond << endl;
 
   return 0;
 }
