@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <regex>
 
 namespace pvrp {
 
@@ -93,9 +94,10 @@ void DataPond::readData(string instMark, int instId) {
   numVehicles = stoi(row.at(1)); 
   numCustomers = stoi(row.at(2));
   numDays = stoi(row.at(3));
+  cout << "\tfirst line read...\n";
 
   // read constraints on vehicle
-  for (int i = 0; i < numVehicles; ++i) {
+  for (int i = 0; i < numDays; ++i) {
     getline(infile, line);
     stringstream s(line);
     row.clear();
@@ -105,49 +107,35 @@ void DataPond::readData(string instMark, int instId) {
     maxDuration = stoi(row.at(0));
     maxLoad = stoi(row.at(1));
   }
+  cout << "\tvehicle info read...\n";
 
   // read individual customers
   int idx;
   double lat, lon;
   int srvTime, demand;
-  int srvFreq, numPattern, pattVal;
+  int srvFreq, numPatterns, pattVal;
   int colIdx{0};
-  while (getline(infile, line)) {
-    getline(infile, line);
-    stringstream s(line);
-    row.clear();
-    while (getline(s, word, ' ')) {
-      row.push_back(word);
-    }
-
-    colIdx = 0;
-    // read index
-    idx = stoi(row.at(colIdx++));
-
-    // latitude and longitude
-    lat = stod(row.at(colIdx++));
-    lon = stod(row.at(colIdx++));
-
-    // service duration
-    srvTime = stoi(row.at(colIdx++));
-    demand = stoi(row.at(colIdx++));
-    
-    // pattern
-    srvFreq = stoi(row.at(colIdx++));
-    numPattern = stoi(row.at(colIdx++));
+  string strCol;
+  for (int i = 0; i < numCustomers; ++i) {
+    infile >> idx;
+    infile >> lat >> lon;
+    infile >> srvTime >> demand;
+    infile >> srvFreq >> numPatterns;
 
     Customer *pCus = new Customer(idx, lat, lon,
                                   srvTime, demand,
-                                  numPattern, numDays);
+                                  srvFreq, numPatterns, 
+                                  numDays);
 
-    for (int p = 0; p < numPattern; ++p) {
-      pattVal = stoi(row.at(colIdx + p));
-      pCus->addPattern(p, pattVal);
+    if (numPatterns > 0) {
+      for (int p = 0; p < numPatterns; ++p) {
+        infile >> pattVal;
+        pCus->addPattern(p, pattVal);
+      }
     }
 
     customers.push_back(pCus);
   }
-
   infile.close();
   cout << "DataPond::start reading instance file...\n";
 }

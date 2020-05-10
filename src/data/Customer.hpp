@@ -24,7 +24,7 @@ class Customer {
  public:
   Customer(int idx, double lat, double lon,
            double srvTime, int demand,
-           int numPatterns,
+           int srvFreq, int numPatterns,
            int numDays);
   ~Customer();
   Customer() = delete;
@@ -42,9 +42,12 @@ class Customer {
   double getDist(int cusIdx) const { return distToOtherCus.at(cusIdx); }
 
   // service pattern
-  void addPattern(int dayIdx, int val);
+  void addPattern(int pIdx, int val);
   int getNumPatterns() const { return numPatterns; }
   std::vector<bool> &getPattern(int pIdx) { return patterns.at(pIdx); }
+
+ private:
+  int numToBinary(int num);
 
  private:
   /**
@@ -69,9 +72,16 @@ class Customer {
    */
   int demand;
   /**
-   * service patterns
+   * number of days that need service
+   */
+  int srvFreq;
+  /**
+   * number of service patterns
    */
   int numPatterns;
+  /**
+   * list of service patterns
+   */
   std::vector<std::vector<bool>> patterns;
 };
 std::ostream &operator<<(std::ostream &, const Customer &c);
