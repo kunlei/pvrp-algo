@@ -27,7 +27,7 @@ using std::pow;
  */
 ostream &operator<<(ostream &strm, const DataPond &dp) {
   strm << "DataPond{numVehicles: " << dp.numVehicles
-       << "\tnumCustomers: " << dp.numCustomers
+       << "\tnumCustomers: " << dp.numNodes
        << "\tnumDays: " << dp.numDays
        << "\tmaxDuration: " << dp.maxDuration
        << "\tmaxLoad: " << dp.maxLoad
@@ -39,18 +39,22 @@ ostream &operator<<(ostream &strm, const DataPond &dp) {
  * constructor
  */
 DataPond::DataPond() : numVehicles(0),
+                       numNodes(0),
                        numCustomers(0),
                        numDays(0),
                        maxDuration(0),
                        maxLoad(0) {
-
 }
 
 /**
  * destructor
  */
 DataPond::~DataPond() {
-
+  // remove all customers
+  for (auto &c : customers) {
+    delete c;
+  }
+  customers.clear();
 }
 
 /**
@@ -95,7 +99,8 @@ void DataPond::readData(string instMark, int instId) {
     row.push_back(word);
   }
   numVehicles = stoi(row.at(1)); 
-  numCustomers = stoi(row.at(2));
+  numNodes = stoi(row.at(2));
+  numCustomers = numNodes - 1;
   numDays = stoi(row.at(3));
   cout << "\tfirst line read...\n";
 
@@ -120,7 +125,7 @@ void DataPond::readData(string instMark, int instId) {
   size_t pattVal;
   int colIdx{0};
   string strCol;
-  for (int i = 0; i < numCustomers; ++i) {
+  for (int i = 0; i < numNodes; ++i) {
     infile >> idx;
     infile >> lat >> lon;
     infile >> srvTime >> demand;
@@ -137,7 +142,6 @@ void DataPond::readData(string instMark, int instId) {
         pCus->addPattern(p, numDays, pattVal);
       }
     }
-
     customers.push_back(pCus);
   }
   infile.close();
@@ -150,12 +154,12 @@ void DataPond::readData(string instMark, int instId) {
 void DataPond::calDistance() {
   // initialize distance vector
   for (auto &c : customers) {
-    c->initDistVec(numCustomers);
+    c->initDistVec(numNodes);
   }
 
   // calculate distance
-  for (int i = 0; i < numCustomers; ++i) {
-    for (int j = i; j < numCustomers; ++j) {
+  for (int i = 0; i < numNodes; ++i) {
+    for (int j = i; j < numNodes; ++j) {
       auto ci = customers.at(i);
       auto cj = customers.at(j);
       double dist = calDistance(ci->getLat(), ci->getLon(),
@@ -177,19 +181,18 @@ void DataPond::showCustomers() const {
 }
 
 /**
- * 
+ * compute distance between two points using their corresponding latitude and longitude
  */
 double DataPond::calDistance(double lat1, double lon1, double lat2, double lon2) {
   return roundDouble(sqrt(pow(lat1 - lat2, 2.0) + pow(lon1 - lon2, 2.0)));
 }
 
 /**
- * 
+ * round a double value
  */
 double DataPond::roundDouble(double val) {
   double precision = 10000.0;
   return (int) (val * precision + (val < 0 ? -0.5 : 0.5)) / precision;
 }
-
   
 }

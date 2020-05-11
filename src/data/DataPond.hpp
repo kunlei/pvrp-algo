@@ -22,6 +22,7 @@ class DataPond {
 
   // accessors
   int getNumVehicles() const { return numVehicles; }
+  int getNumNodes() const { return numNodes; }
   int getNumCustomers() const { return numCustomers; }
   int getNumDays() const { return numDays; }
   double getMaxDuration() const { return maxDuration; }
@@ -29,7 +30,8 @@ class DataPond {
   void showCustomers() const;
 
  private:
-  double calDistance(double lat1, double lon1, double lat2, double lon2);
+  double calDistance(double lat1, double lon1, 
+                     double lat2, double lon2);
   double roundDouble(double val);
 
  private:
@@ -40,6 +42,7 @@ class DataPond {
   /**
    * number of customers
    */
+  int numNodes;
   int numCustomers;
   /**
    * number of days in the planning horizon

@@ -120,5 +120,4 @@ size_t Customer::numToBinary(size_t num) {
   }
 }
 
-
 }
