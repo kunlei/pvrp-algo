@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <regex>
+#include <cmath>
 
 namespace pvrp {
 
@@ -18,6 +19,8 @@ using std::stringstream;
 using std::vector;
 using std::stoi;
 using std::stod;
+using std::sqrt;
+using std::pow;
 
 /**
  * output to console/file/string
@@ -113,7 +116,8 @@ void DataPond::readData(string instMark, int instId) {
   int idx;
   double lat, lon;
   int srvTime, demand;
-  int srvFreq, numPatterns, pattVal;
+  int srvFreq, numPatterns;
+  size_t pattVal;
   int colIdx{0};
   string strCol;
   for (int i = 0; i < numCustomers; ++i) {
@@ -130,7 +134,7 @@ void DataPond::readData(string instMark, int instId) {
     if (numPatterns > 0) {
       for (int p = 0; p < numPatterns; ++p) {
         infile >> pattVal;
-        pCus->addPattern(p, pattVal);
+        pCus->addPattern(p, numDays, pattVal);
       }
     }
 
@@ -139,5 +143,53 @@ void DataPond::readData(string instMark, int instId) {
   infile.close();
   cout << "DataPond::start reading instance file...\n";
 }
+
+/**
+ * calculate distance between customers
+ */
+void DataPond::calDistance() {
+  // initialize distance vector
+  for (auto &c : customers) {
+    c->initDistVec(numCustomers);
+  }
+
+  // calculate distance
+  for (int i = 0; i < numCustomers; ++i) {
+    for (int j = i; j < numCustomers; ++j) {
+      auto ci = customers.at(i);
+      auto cj = customers.at(j);
+      double dist = calDistance(ci->getLat(), ci->getLon(),
+                                cj->getLat(), cj->getLon());
+      ci->setDist(j, dist);
+      cj->setDist(i, dist);
+    }
+  }
+}
+
+/**
+ * show all customers
+ */
+void DataPond::showCustomers() const {
+  cout << "show all customers..\n";
+  for (auto pc : customers) {
+    cout << *pc << endl;
+  }
+}
+
+/**
+ * 
+ */
+double DataPond::calDistance(double lat1, double lon1, double lat2, double lon2) {
+  return roundDouble(sqrt(pow(lat1 - lat2, 2.0) + pow(lon1 - lon2, 2.0)));
+}
+
+/**
+ * 
+ */
+double DataPond::roundDouble(double val) {
+  double precision = 10000.0;
+  return (int) (val * precision + (val < 0 ? -0.5 : 0.5)) / precision;
+}
+
   
 }

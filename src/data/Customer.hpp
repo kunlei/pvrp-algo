@@ -42,12 +42,12 @@ class Customer {
   double getDist(int cusIdx) const { return distToOtherCus.at(cusIdx); }
 
   // service pattern
-  void addPattern(int pIdx, int val);
+  void addPattern(int pIdx, int numDays, size_t val);
   int getNumPatterns() const { return numPatterns; }
   std::vector<bool> &getPattern(int pIdx) { return patterns.at(pIdx); }
 
  private:
-  int numToBinary(int num);
+  size_t numToBinary(size_t num);
 
  private:
   /**

@@ -15,11 +15,38 @@ using std::vector;
  */
 ostream &operator<<(ostream &strm, const Customer &c) {
   strm << "Customer{idx: " << c.idx
+       << "\tlat: " << c.lat
+       << "\tlon: " << c.lon << endl
        << "\tsrvTime: " << c.srvTime
-       << "\tdemand: " << c.demand
+       << "\tdemand: " << c.demand << endl
        << "\tsrvFreq: " << c.srvFreq
        << "\tnumPatterns: " << c.numPatterns
-       << "}";
+       << endl
+       << "\tavailable patterns: " << endl;
+  if (!c.patterns.empty()) {
+    int numDays = (int)c.patterns.at(0).size();
+    strm << "\tday: ";
+    for (int d = 0; d < numDays; ++d) {
+      strm << "\t" << d;
+    }
+    strm << endl;
+
+    for (auto &patt : c.patterns) {
+      strm << "\t";
+      for (const auto &v : patt) {
+        strm << "\t" << v;
+      }
+      strm << endl;
+    }
+  }
+
+  strm << "\tdistance vector: " << endl;
+  int numCustomers = (int) c.distToOtherCus.size();
+  for (int i = 0; i < numCustomers; ++i) {
+    strm << "\t" << i << "(" << c.distToOtherCus.at(i) << ")";
+  }
+  strm << endl;
+  strm << "}";
   return strm;
 }
 
@@ -66,21 +93,26 @@ void Customer::initDistVec(int numCus) {
 /**
  * add a candidate service pattern
  */
-void Customer::addPattern(int pIdx, int val) {
-  int binary = numToBinary(val);
+void Customer::addPattern(int pIdx, int numDays, size_t val) {
+  // get binary string
+  size_t binaryVal = numToBinary(val);
 
-  int base = (int) pow(10, 4 - 1);
+  size_t base = static_cast<size_t>(pow(10, numDays - 1));
   int quotient, remainder;
-  for (int i = 0; i < 4; ++i) {
-    quotient = binary / base;
-    remainder = binary % base;
-    patterns.at(pIdx).at(i) = quotient;
-    binary = remainder;
+  for (int i = 0; i < numDays; ++i) {
+    quotient = binaryVal / base;
+    remainder = binaryVal % base;
+    patterns.at(pIdx).at(i) = (quotient != 0);
+    binaryVal = remainder;
     base = base / 10;
   }
 }
 
-int Customer::numToBinary(int num) {
+/**
+ * transform a integer value into a string of binary numbers
+ * for example, '3' will be translated into '11'.
+ */
+size_t Customer::numToBinary(size_t num) {
   if (num == 0) {
     return 0;
   } else {

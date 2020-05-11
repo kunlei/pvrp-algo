@@ -15,6 +15,8 @@ int main() {
   // read data
   DataPond dataPond;
   dataPond.readData(instMark, instId);
+  dataPond.calDistance();
+  dataPond.showCustomers();
 
   cout << dataPond << endl;
 
